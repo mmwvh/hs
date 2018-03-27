@@ -9,5 +9,6 @@ for i = 1:sizeof(k)
   y(:,i) = sbox(bitxor(in,k(1,i))+1); 
 endfor
 
+pp = reshape(sum(dec2bin(y)' == '1'), rows(y), columns(y));
 
-  pp = reshape(sum(dec2bin(y)' == '1'), rows(y), columns(y))
+cwc = abs(corr(traces, pp))
