@@ -2,4 +2,5 @@
 *.pdf
 *.tar.xz
 *.mat
+*.zip
 octave-workspace
