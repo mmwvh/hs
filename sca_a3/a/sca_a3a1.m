@@ -32,3 +32,5 @@ score1t1 = compScore(test_set1, T1);
 # 
 resultRedTest0 = detResultRed(score0t0, score1t0);
 resultRedTest1 = detResultRed(score0t1, score1t1);
+
+# TODO 3a1 mismatch
