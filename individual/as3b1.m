@@ -1,4 +1,5 @@
 # Aniek den Teuling - s1010747
+# This is in Octave
 
 load input.mat
 load leakage_y0_y1.mat
@@ -8,7 +9,7 @@ load leakage_y0_y1.mat
 # I use function nchoosek which gives all combinations of vector v, picking 2 values at a time.
 # The vectors are the rows of the leakage matrix.
 # Each nchoosek(v,2) gives a matrix of 45x2 combinations but these need to be multiplied
-# to find the result of all combinations, which is a 45x1 vector, which I transpose to get 1x45 vectors.
+# to find the result of all combinations, which is a 45x1 vector, which I transpose to get 1x45 vector.
 # These 2000 vectors together form the 2000x45 matrix with all possible multiplications between the samples.
 
 for idx = 1:rows(L)
@@ -41,6 +42,14 @@ correlation = result = key_can(1,1)
 figure;
 xlabel("Traces");
 ylabel("Correlation");
-title("Correlation of preprocessed traces and keys");
+title("Correlation between preprocessed traces and keys");
 
 hold on
+for idx = 1:columns(abs_corr_val)
+  if(idx == result+1)
+    plot(abs_corr_val(:,idx), 'Color', [1 0 0]);
+  else
+    plot(abs_corr_val(:,idx), 'Color', [0 0 0]+ 0.003*idx);
+  endif
+endfor
+hold off
