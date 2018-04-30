@@ -25,12 +25,14 @@ endfunction
 
 # reduced template matching
 score0t0 = compScore(test_set0, T0);
-score1t0 = compScore(test_set0, T1);
-score0t1 = compScore(test_set1, T0);
+score0t1 = compScore(test_set0, T1);
+score1t0 = compScore(test_set1, T0);
 score1t1 = compScore(test_set1, T1);
 
-# 
-resultRedTest0 = detResultRed(score0t0, score1t0);
-resultRedTest1 = detResultRed(score0t1, score1t1);
+# prediction matrix
+resultRedTest0 = detResultRed(score0t0, score0t1);
+resultRedTest1 = detResultRed(score1t0, score1t1);
 
-# TODO 3a1 mismatch
+# mismatch
+mis0 = sum(resultRedTest0 == 1) / length(test_set0)
+mis1 = sum(resultRedTest1 == 0) / length(test_set1)
