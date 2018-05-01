@@ -1,5 +1,8 @@
 # Wesley van Hoorn  --  s4018044
 
+clear all;
+close all;
+
 load input.mat
 load leakage_y0_y1.mat
 
@@ -10,7 +13,7 @@ dim = factorial(columns(L))/(factorial(columns(L) - order)*factorial(order));
 t = zeros(rows(L), dim);
 for idx = 1:rows(t)
   tmp = nchoosek(L(idx, :), order);
-  t(idx, :) = (tmp(:,1).*tmp(:,2))';
+  t(idx, :) = tmp(:,1).*tmp(:,2);
 endfor
 
 # key candidates
@@ -30,16 +33,9 @@ correlation = result = key_can(1,1)
 
 # plot
 figure;
-xlabel("Traces");
+bar(key_can(:, 2));
+xt = get(gca, 'XTick');
+set(gca, 'XTick', xt, 'XTickLabel', key_can(:,1));
+xlabel("Key candidates");
 ylabel("Correlation");
-title("Correlation between processed traces and leakage");
-
-hold on
-for idx = 1:columns(abs_cw_corr)
-  if(idx == result+1)
-    plot(abs_cw_corr(:,idx), 'Color', [1 0 0]);
-  else
-    plot(abs_cw_corr(:,idx), 'Color', [0 0 0]+0.003*idx);
-  endif
-endfor
-hold off  
+title("Correlation between processed traces and key candidates");

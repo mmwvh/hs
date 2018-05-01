@@ -1,3 +1,8 @@
+# Wesley van Hoorn  --  s4018044
+
+clear all;
+close all;
+
 load dataset.mat
 
 # reduced template building
@@ -6,32 +11,12 @@ T1 = mean(train_set1);
 muT = (T0 + T1)/2; 
 
 # compute score 
-function B = compB(Tk, muT)
-  for idx = 1:rows(test_set)
-    score(idx,:) = (test_set(idx, :) - T)*(test_set(idx, :) - T)';
+function b = bf(test1, test2, muT)
+  for idx = 1:rows(test1)
+    b(idx,:) = ((test1(idx, :)' - muT')*(test1(idx, :)' - muT')' + ...
+    (test2(idx, :)' - muT')*(test2(idx, :)' - muT')')/2;
   endfor
 endfunction
 
-# determine result for reduced template matching
-function result = detResultRed(score0, score1)
-  result = score0 - score1;
-  for idx = 1:numel(result)
-    if result(idx) <= 0
-      result(idx) = 0;
-    else
-      result(idx) = 1;
-    endif
-  endfor
-endfunction
+[u, s, v] = svd(bf(test_set0, test_set1, muT));
 
-# reduced template matching
-score0t0 = compScore(test_set0, T0);
-score1t0 = compScore(test_set0, T1);
-score0t1 = compScore(test_set1, T0);
-score1t1 = compScore(test_set1, T1);
-
-# 
-resultRedTest0 = detResultRed(score0t0, score1t0);
-resultRedTest1 = detResultRed(score0t1, score1t1);
-
-# TODO 3a1 mismatch
