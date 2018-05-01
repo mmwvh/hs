@@ -57,8 +57,8 @@ mismatch_t1 = sum(result1(:) == 0);
 # Misclassification rate
 # misclassification rate t0 = 0.52625;
 # misclassification rate t1 = 0.45915;
-mis_clas_rate_t0 = mismatch_t0 / numel(result0);
-mis_clas_rate_t1 = mismatch_t1 / numel(result1);
+mis_clas_rate_t0 = mismatch_t0 / numel(result0)
+mis_clas_rate_t1 = mismatch_t1 / numel(result1)
 
 # STEP 2
 # POI using difference of means
@@ -82,7 +82,7 @@ p_0_0 = normpdf(poi_0, mean_0, var_0);
 # Probability poi_0 comes from O_1
 p_0_1 = normpdf(poi_0, mean_1, var_1);
 
-lambda_0 = p_0_0 / p_0_1
+lambda_0 = p_0_0 / p_0_1;
 if lambda_0 > 1
   disp("POI_0 matches O1");
 else 
@@ -94,17 +94,72 @@ p_1_0 = normpdf(poi_1, mean_0, var_0);
 # Probability poi_1 comes from O_1
 p_1_1 = normpdf(poi_1, mean_1, var_1);
 
-lambda_1 = p_1_0 / p_1_1
+lambda_1 = p_1_0 / p_1_1;
 if lambda_1 > 1
   disp("POI_1 matches O1");
 else
   disp("POI_1 matches O0");
 end
 
-# False positive / false negative
-# TBD
+# False positive and false negative rate
+# False positive rate: decide O1; O0 true
+# False negative rate: decide O0; O1 true
+# I think this should be done with Bayes' rule but
+# I could not figure out how
+
 # Misclassification rate
-# TBD
+# misclassification rate 0 = 0.47890
+# misclassification rate 1 = 0.52077
+
+# Test set 0 vs normpfds
+nscore0t0 = zeros(size(test_set0));
+for idx = 1:rows(test_set0)
+  nscore0t0(idx, :) = abs(test_set0(idx, :) - p_0_0);
+endfor
+
+nscore0t1 = zeros(size(test_set0));
+for idx = 1:rows(test_set0)
+  nscore0t1(idx, :) = abs(test_set0(idx, :) - p_0_1);
+endfor
+# Test set 1 vs normpdfs
+nscore1t0 = zeros(size(test_set1));
+for idx = 1:rows(test_set1)
+  nscore1t0(idx, :) = abs(test_set1(idx,:) - p_1_0);
+endfor
+
+nscore1t1 = zeros(size(test_set1));
+for idx = 1:rows(test_set1)
+  nscore1t1(idx, :) = abs(test_set1(idx, :) - p_1_1);
+endfor
+
+# Determine scores wrt normpdf
+nresult0 = nscore0t0 - nscore0t1;
+for idx = 1:numel(nresult0)
+  if nresult0(idx) <= 0
+    nresult0(idx) = 0;
+  else
+    nresult0(idx) = 1;
+  endif
+endfor
+
+nresult1 = nscore1t0 - nscore1t1;
+for idx = 1:numel(nresult1)
+  if nresult1(idx) <= 0
+    nresult1(idx) = 0;
+  else
+    nresult1(idx) = 1;
+  endif
+endfor
+
+# Number of mismatches wrt normpdf
+nmismatch_0 = sum(nresult0(:) == 1);
+nmismatch_1 = sum(nresult1(:) == 0);
+
+# Misclassification rate wrt normdpdf
+# normpdf 0 misclasrate = 0.47890
+# normpdf 1 misclasrate = 0.52077
+nmis_clas_rate_0 = nmismatch_0 / numel(nresult0)
+nmis_clas_rate_1 = nmismatch_1 / numel(nresult1)
 
 # STEP 3
 # (a) Compute mean of operation 0 and 1
@@ -118,7 +173,7 @@ b = 0.5 * (((mean_0.' - mean_op.') * (mean_0.' - mean_op.').') + ((mean_1.' - me
 [u,s,v] = svd(b);
 
 # (d) Compute u reduced
-# Chosen dimension: 30
+# Chosen dimension: 500
 m = 500;
 u_reduced = u(:,1:m);
 
@@ -137,7 +192,7 @@ cov_train_1   = cov(proj_train_1);
 
 # (g) Compute misclassification rate
 # My code does not work, I followed slide 37 from the FastTemplateTutorial pdf
-# but get stuck at the computation of lambda and gamma. However, here's the code:
+# but got stuck at the computation of lambda and gamma. However, here's the code:
 #{
 lambda_proj_train_0 = 0.5 * (proj_test_0 - mean_proj_train_0).' * inv(cov_train_0) ...
           * (proj_test_0 - cov_train_0) - 0.5 * (proj_test_0 - mean_proj_train_1).' ...

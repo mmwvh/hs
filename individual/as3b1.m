@@ -27,12 +27,17 @@ endfor
 key_can = cast(0:15, "uint8");
 
 for idx = 1:sizeof(key_can)
-  val_pred(:, idx) = bitxor(input, key_can(idx));
+  val_pred(:, idx) = bitxor(input, key_can(idx)+1);
 endfor
 
 # Correlation power analysis
 abs_corr_val = abs(corr(pre_pro, val_pred));
-# Result key
+# Result key = 15
+# I found both keys 0 and 15 with the same correlation values
+# Also, every found correlation value belongs to two keys, 
+# that summed together are 15. I find this strange but can 
+# not find a possible mistake myself
+
 key_can = cast(vertcat(0:15, max(abs_corr_val))', "single");
 key_can = flipud(sortrows(key_can,2));
 printf "Key candidate with highest "
