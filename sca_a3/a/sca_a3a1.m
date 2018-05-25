@@ -11,9 +11,7 @@ T1 = mean(train_set1);
 
 # compute score 
 function score = scoref(test_set, T)
-  for idx = 1:rows(test_set)
-    score(idx,:) = (test_set(idx, :) - T)*(test_set(idx, :) - T)';
-  endfor
+    score = (test_set' - T')*(test_set' - T')';
 endfunction
 
 # determine result for reduced template matching
@@ -39,5 +37,5 @@ resultT0 = resultf(score0t0, score0t1);
 resultT1 = resultf(score1t0, score1t1);
 
 # mismatch
-mis0 = sum(resultT0 == 1) / length(test_set0)
-mis1 = sum(resultT1 == 0) / length(test_set1)
+mis0 = mean(sum(resultT0 == 1) / length(test_set0))
+mis1 = mean(sum(resultT1 == 0) / length(test_set1))
